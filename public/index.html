@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Quicknote</title>
+<meta name="theme-color" content="#3558F0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Quicknote">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/icons/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" href="/icons/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="/icons/favicon-16.png" sizes="16x16" type="image/png">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="stylesheet" href="style.css">
+<script>try{var t=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.dataset.theme=t}catch(e){}</script>
+</head>
+<body>
+<main class="app">
+  <header class="top">
+    <h1 id="screen-title">Quicknote</h1>
+    <button id="theme" class="avatar" aria-label="Alternar tema"><i class="fa-solid fa-moon"></i></button>
+  </header>
+
+  <section id="view-notes">
+    <div class="search">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input id="q" type="search" placeholder="Search note..." autocomplete="off">
+      <button id="layout" class="icon-btn" aria-label="Alternar layout"><i class="fa-solid fa-table-list"></i></button>
+    </div>
+    <div id="chips" class="chips" aria-label="Filtrar por caderno"></div>
+    <div id="list" class="notes"></div>
+    <p id="empty" class="empty" hidden>Nenhuma nota aqui ainda.</p>
+  </section>
+
+  <section id="view-notebooks" hidden>
+    <div id="nb-list" class="nb-list"></div>
+    <p id="nb-empty" class="empty" hidden>Nenhum caderno ainda.</p>
+  </section>
+
+  <nav class="dock" aria-label="Navegação">
+    <div class="pill">
+      <button class="pill-item" data-nav="notes" aria-current="page"><i class="fa-solid fa-note-sticky"></i><span>Notas</span></button>
+      <button class="pill-item" data-nav="notebooks"><i class="fa-solid fa-book"></i><span>Cadernos</span></button>
+    </div>
+    <button id="add" class="pill-add" aria-label="Nova nota"><i class="fa-solid fa-plus"></i></button>
+  </nav>
+</main>
+
+<div id="sheet" class="overlay" hidden>
+  <form id="form" class="sheet">
+    <div class="sheet-head">
+      <h2 id="sheet-title">Nova nota</h2>
+      <button type="button" id="close" class="icon-btn" aria-label="Fechar"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <input id="title" class="field" placeholder="Título" maxlength="120" required>
+    <textarea id="content" class="field" placeholder="Escreva sua nota..." rows="5"></textarea>
+    <div class="tools">
+      <button type="button" id="photo" class="chip"><i class="fa-solid fa-image"></i>Foto</button>
+      <button type="button" id="sketch" class="chip"><i class="fa-solid fa-pen-nib"></i>Desenhar</button>
+      <input id="file" type="file" accept="image/*" multiple hidden>
+    </div>
+    <div id="thumbs" class="thumbs" hidden></div>
+    <div id="nb-pick" class="chips pick" role="radiogroup" aria-label="Caderno"></div>
+    <div id="colors" class="colors" role="radiogroup" aria-label="Cor da nota"></div>
+    <div class="actions">
+      <button type="button" id="del" class="btn ghost" hidden><i class="fa-solid fa-trash"></i> Excluir</button>
+      <button type="submit" class="btn"><i class="fa-solid fa-check"></i> Salvar</button>
+    </div>
+  </form>
+</div>
+
+<div id="nb-sheet" class="overlay" hidden>
+  <form id="nb-form" class="sheet">
+    <div class="sheet-head">
+      <h2 id="nb-title">Novo caderno</h2>
+      <button type="button" id="nb-close" class="icon-btn" aria-label="Fechar"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <input id="nb-name" class="field" placeholder="Nome do caderno" maxlength="60" required>
+    <div id="nb-colors" class="colors" role="radiogroup" aria-label="Cor do caderno"></div>
+    <div class="actions">
+      <button type="button" id="nb-del" class="btn ghost" hidden><i class="fa-solid fa-trash"></i> Excluir</button>
+      <button type="submit" class="btn"><i class="fa-solid fa-check"></i> Salvar</button>
+    </div>
+  </form>
+</div>
+
+<div id="draw" class="draw" hidden>
+  <div class="draw-bar">
+    <button type="button" id="draw-close" class="icon-btn" aria-label="Fechar"><i class="fa-solid fa-xmark"></i></button>
+    <h2>Desenho</h2>
+    <button type="button" id="draw-save" class="btn"><i class="fa-solid fa-check"></i> Salvar</button>
+  </div>
+  <div id="stage" class="stage"><canvas id="cv"></canvas></div>
+  <div id="draw-tools" class="draw-tools"></div>
+</div>
+
+<div id="viewer" class="viewer" hidden>
+  <img id="viewer-img" alt="">
+  <button type="button" id="viewer-close" class="icon-btn" aria-label="Fechar"><i class="fa-solid fa-xmark"></i></button>
+</div>
+
+<div id="menu" class="overlay center" hidden>
+  <div class="pop" role="dialog" aria-modal="true" aria-labelledby="pop-title">
+    <p id="pop-title" class="pop-title"></p>
+    <p id="pop-text" class="pop-text" hidden></p>
+    <div class="pop-actions">
+      <button type="button" id="pop-edit" class="pop-btn"><i class="fa-solid fa-pen"></i><span>Editar</span></button>
+      <button type="button" id="pop-del" class="pop-btn danger"><i class="fa-solid fa-trash"></i><span id="pop-del-label">Excluir</span></button>
+      <button type="button" id="pop-cancel" class="pop-btn ghost">Cancelar</button>
+    </div>
+  </div>
+</div>
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+databases:
+  - name: quicknote-db
+    plan: free
+    databaseName: quicknote
+
+services:
+  - type: web
+    name: quicknote
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: quicknote-db
+          property: connectionString
